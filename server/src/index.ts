@@ -10,6 +10,7 @@ const port = process.env.PORT || 3001;
 const allowedOrigins = [
   'http://localhost:3000',
   'https://pizza-wheel.vercel.app', // Add your Vercel domain
+  'https://jbsfortunewheelv2.vercel.app/',
   process.env.FRONTEND_URL // This will be used if you set it in environment variables
 ].filter(Boolean); // Remove any undefined values
 
