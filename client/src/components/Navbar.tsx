@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import Logo from "../../public/assets/Logo.webp";
+import Logo from "../../public/assets/Logo.png";
 
 export const Navbar: React.FC = () => {
   const sucursales = [
@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
   return (
     <nav
       style={{
-        background: "black",
+        background: "#e1261c",
         padding: "1rem",
         position: "fixed",
         width: "100%",
@@ -109,7 +109,7 @@ export const Navbar: React.FC = () => {
         }}
       >
         <Link to="/" style={{ display: "flex", alignItems: "center" }}>
-          <img src={Logo} alt="Peperonni's" height="50" />
+          <img src={Logo} alt="Peperonni's" height="70" width="auto" />
         </Link>
 
         <button className="navbar-hamburger" onClick={() => setIsOpen(!isOpen)}>

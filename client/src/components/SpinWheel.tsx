@@ -206,20 +206,27 @@ export const SpinWheel: React.FC = () => {
             prizeNumber={prizeNumber}
             data={data}
             onStopSpinning={handleStopSpinning}
-            outerBorderColor="#FF0000"
-            outerBorderWidth={8}
-            innerBorderColor="#FF0000"
+            outerBorderColor="#333333"
+            outerBorderWidth={3}
+            innerBorderColor="#333333"
             innerBorderWidth={1}
-            innerRadius={10}
-            radiusLineColor="#FF0000"
+            innerRadius={20}
+            radiusLineColor="#666666"
             radiusLineWidth={1}
             fontSize={15}
             textDistance={60}
             fontFamily="Montserrat"
-            backgroundColors={["#FFFFFF", "#000000"]}
-            textColors={["#FF0000"]}
+            backgroundColors={["#FFFFFF", "#f8f8f8"]}
+            textColors={["#333333"]}
             perpendicularText={false}
             spinDuration={0.8}
+            pointerProps={{
+              style: {
+                backgroundColor: "white",
+                border: "2px solid #333333",
+                color: "#333333",
+              },
+            }}
           />
         </div>
       </div>
