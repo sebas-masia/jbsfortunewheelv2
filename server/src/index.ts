@@ -10,18 +10,20 @@ const port = process.env.PORT || 3001;
 const allowedOrigins = [
   'http://localhost:3000',
   'https://pizza-wheel.vercel.app', // Add your Vercel domain
-  'https://jbsfortunewheelv2.vercel.app/',
+  'https://jbsfortunewheelv2.vercel.apps',
   process.env.FRONTEND_URL // This will be used if you set it in environment variables
 ].filter(Boolean); // Remove any undefined values
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    console.log('Request origin:', origin);
+    
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log('Blocked by CORS:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
