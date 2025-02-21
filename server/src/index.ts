@@ -116,16 +116,45 @@ app.post('/api/spins', (req: Request, res: Response) => {
       if (award !== "Intenta de nuevo") {
         try {
           await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+            from: `"JBs Rewards" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: '¡Felicitaciones por tu premio en JBs!',
+            subject: '¡Felicitaciones por tu premio en JBs! 🎉',
+            attachments: [{
+              filename: 'Logo.png',
+              path: './src/Logo.png', // Adjust this path to where your logo is stored
+              cid: 'logo' // Content ID for referencing in the HTML
+            }],
             html: `
-              <h2>¡Felicitaciones ${customerName}!</h2>
-              <p>Has ganado: ${award}</p>
-              <p>Puedes reclamar tu premio en cualquier sucursal de JBs presentando este correo y tu factura.</p>
-              <p>Número de referencia: ${id}</p>
-              <br>
-              <p>¡Gracias por participar!</p>
+              <div style="background-color: #000000; color: white; font-family: Arial, sans-serif; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 8px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                  <img src="cid:logo" alt="JBs Logo" style="max-width: 200px;">
+                </div>
+                
+                <h2 style="font-size: 32px; text-transform: uppercase; margin: 0 0 20px 0; text-align: center; color: white;">¡Felicitaciones ${customerName}!</h2>
+                
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                  <p style="font-size: 24px; text-align: center; margin: 0; color: #e1261c;">Has ganado: <strong>${award}</strong></p>
+                </div>
+
+                <div style="margin: 30px 0; line-height: 1.6;">
+                  <p style="margin: 10px 0;">Para reclamar tu premio:</p>
+                  <ul style="list-style: none; padding: 0; margin: 20px 0;">
+                    <li style="margin: 10px 0;">✅ Visita cualquier sucursal de JBs</li>
+                    <li style="margin: 10px 0;">✅ Presenta este correo</li>
+                    <li style="margin: 10px 0;">✅ Muestra tu factura</li>
+                  </ul>
+                </div>
+
+                <div style="background: #e1261c; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                  <p style="margin: 0; font-weight: bold;">Número de referencia: ${id}</p>
+                </div>
+
+                <p style="color: #ff9999; font-size: 14px; text-align: center; margin-top: 30px;">⚠️ Este premio es válido hasta el 31 de marzo de 2025</p>
+
+                <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                  <p style="margin: 0;">¡Gracias por participar!</p>
+                </div>
+              </div>
             `
           });
         } catch (emailError) {
