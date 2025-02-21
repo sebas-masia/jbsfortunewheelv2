@@ -49,7 +49,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const db = new Database('spins2.db');
+const db = new Database('spins3.db');
 
 interface Spin {
   id: string;
@@ -57,7 +57,6 @@ interface Spin {
   cedula: string;
   email: string;
   phoneNumber: string;
-  sucursal: string;
   award: string;
   isSpecialPrize?: boolean;
   isDisbursed: boolean;
@@ -72,7 +71,6 @@ db.run(`
     cedula TEXT NOT NULL,
     email TEXT NOT NULL,
     phoneNumber TEXT NOT NULL,
-    sucursal TEXT NOT NULL,
     award TEXT NOT NULL,
     isSpecialPrize BOOLEAN DEFAULT 0,
     isDisbursed BOOLEAN DEFAULT 0,
@@ -102,12 +100,12 @@ transporter.verify(function (error, success) {
 
 // Modify the POST /api/spins endpoint
 app.post('/api/spins', (req: Request, res: Response) => {
-  const { customerName, cedula, email, phoneNumber, sucursal, award, isSpecialPrize } = req.body as Spin;
+  const { customerName, cedula, email, phoneNumber, award, isSpecialPrize } = req.body as Spin;
   const id = uuidv4();
 
   db.run(
-    'INSERT INTO spins (id, customerName, cedula, email, phoneNumber, sucursal, award, isSpecialPrize, isDisbursed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [id, customerName, cedula, email, phoneNumber, sucursal, award, isSpecialPrize ? 1 : 0, 0],
+    'INSERT INTO spins (id, customerName, cedula, email, phoneNumber, award, isSpecialPrize, isDisbursed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [id, customerName, cedula, email, phoneNumber, award, isSpecialPrize ? 1 : 0, 0],
     async (err) => {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -124,7 +122,7 @@ app.post('/api/spins', (req: Request, res: Response) => {
             html: `
               <h2>¡Felicitaciones ${customerName}!</h2>
               <p>Has ganado: ${award}</p>
-              <p>Puedes reclamar tu premio en nuestra sucursal de ${sucursal} presentando este correo y tu factura.</p>
+              <p>Puedes reclamar tu premio en cualquier sucursal de JBs presentando este correo y tu factura.</p>
               <p>Número de referencia: ${id}</p>
               <br>
               <p>¡Gracias por participar!</p>
@@ -142,7 +140,6 @@ app.post('/api/spins', (req: Request, res: Response) => {
         cedula, 
         email, 
         phoneNumber, 
-        sucursal, 
         award,
         isSpecialPrize,
         isDisbursed: false 

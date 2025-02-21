@@ -4,7 +4,6 @@ export interface Spin {
   cedula: string;
   email: string;
   phoneNumber: string;
-  sucursal: string;
   award: string;
   isSpecialPrize: boolean;
   isDisbursed: boolean;

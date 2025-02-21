@@ -7,15 +7,12 @@ interface AdminTableProps {
   onDisbursed?: (id: string) => void;
 }
 
-const LOCATIONS = ["Escazu", "Belen", "Alajuela", "San Ramon"];
-
 const FIELD_LABELS: Record<string, string> = {
   id: "ID",
   customerName: "Nombre del Cliente",
   cedula: "Cédula",
   email: "Email",
   phoneNumber: "Teléfono",
-  sucursal: "Sucursal",
   award: "Premio",
   createdAt: "Fecha",
   isSpecialPrize: "Es Premio Especial",
@@ -28,7 +25,6 @@ const COLUMNS = [
   { field: "cedula", label: "Cédula", className: "col-cedula" },
   { field: "email", label: "Email", className: "col-email" },
   { field: "phoneNumber", label: "Teléfono", className: "col-phone" },
-  { field: "sucursal", label: "Sucursal", className: "col-branch" },
   { field: "award", label: "Premio", className: "col-prize" },
   { field: "createdAt", label: "Fecha", className: "col-date" },
   { field: "isSpecialPrize", label: "Especial", className: "col-special" },
@@ -42,7 +38,6 @@ export const AdminTable: React.FC<AdminTableProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<keyof Spin>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
 
   const sortedAndFilteredSpins = useMemo(() => {
     return spins
@@ -51,15 +46,9 @@ export const AdminTable: React.FC<AdminTableProps> = ({
         const matchesSearch =
           spin.customerName.toLowerCase().includes(searchLower) ||
           spin.cedula.toLowerCase().includes(searchLower) ||
-          spin.sucursal.toLowerCase().includes(searchLower) ||
           spin.award.toLowerCase().includes(searchLower);
 
-        // Apply location filter
-        const matchesLocation = selectedLocation
-          ? spin.sucursal === selectedLocation
-          : true;
-
-        return matchesSearch && matchesLocation;
+        return matchesSearch;
       })
       .sort((a, b) => {
         const aValue = a[sortField];
@@ -70,7 +59,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({
           return aValue > bValue ? -1 : 1;
         }
       });
-  }, [spins, searchTerm, sortField, sortDirection, selectedLocation]);
+  }, [spins, searchTerm, sortField, sortDirection]);
 
   const handleSort = (field: keyof Spin) => {
     if (field === sortField) {
@@ -95,25 +84,6 @@ export const AdminTable: React.FC<AdminTableProps> = ({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="location">Filtrar por sucursal:</label>
-            <div className="location-filter">
-              <select
-                id="location"
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="location-select"
-              >
-                <option value="">Todas las Sucursales</option>
-                {LOCATIONS.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </div>
@@ -144,10 +114,13 @@ export const AdminTable: React.FC<AdminTableProps> = ({
                 <td className="col-cedula">{spin.cedula}</td>
                 <td className="col-email">{spin.email}</td>
                 <td className="col-phone">{spin.phoneNumber}</td>
-                <td className="col-branch">{spin.sucursal}</td>
                 <td className="col-prize">{spin.award}</td>
                 <td className="col-date">
-                  {new Date(spin.createdAt).toLocaleString()}
+                  {new Date(spin.createdAt).toLocaleString("es-CR", {
+                    timeZone: "America/Costa_Rica",
+                    dateStyle: "medium",
+                    timeStyle: "medium",
+                  })}
                 </td>
                 <td className="col-special">
                   {spin.isSpecialPrize ? "Si" : "No"}

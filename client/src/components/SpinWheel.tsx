@@ -6,16 +6,14 @@ import { API_URL } from "../config";
 const data = [
   { option: "Papitas GRATIS" },
   { option: "Postre GRATIS" },
+  { option: "Intenta de nuevo" },
   { option: "Papas Refresco GRATIS" },
   { option: "4 Combos JBs Classic" },
   { option: "Intenta de nuevo" },
 ];
 
-const LOCATIONS = ["Escazu", "Belen", "Alajuela", "San Ramon"];
-
 export const SpinWheel: React.FC = () => {
   const [customerName, setCustomerName] = useState("");
-  const [sucursal, setSucursal] = useState("");
   const [cedula, setCedula] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -62,7 +60,7 @@ export const SpinWheel: React.FC = () => {
     e.preventDefault();
     setError(null);
 
-    if (!customerName || !sucursal || !cedula || !email || !phoneNumber) {
+    if (!customerName || !cedula || !email || !phoneNumber) {
       setError("Por favor complete todos los campos");
       return;
     }
@@ -131,7 +129,6 @@ export const SpinWheel: React.FC = () => {
         cedula,
         email,
         phoneNumber,
-        sucursal,
         award: data[prizeNumber].option,
         isSpecialPrize: prizeNumber === 3, // Add flag for special prize
       });
@@ -146,7 +143,6 @@ export const SpinWheel: React.FC = () => {
 
   const handlePlayAgain = () => {
     setCustomerName("");
-    setSucursal("");
     setCedula("");
     setEmail("");
     setPhoneNumber("");
@@ -240,24 +236,6 @@ export const SpinWheel: React.FC = () => {
                 placeholder="88888888"
               />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="restaurant">RESTAURANTE DE LA ORDEN</label>
-              <select
-                id="restaurant"
-                value={sucursal}
-                onChange={(e) => setSucursal(e.target.value)}
-                required
-              >
-                <option value="">Seleccionar restaurante</option>
-                {LOCATIONS.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             <button type="submit">GIRAR</button>
           </form>
         </div>
@@ -277,7 +255,7 @@ export const SpinWheel: React.FC = () => {
             fontSize={13}
             textDistance={59}
             fontFamily="Montserrat"
-            backgroundColors={["#FFFFFF", "#f8f8f8"]}
+            backgroundColors={["#FFFFFF", "#c9c7c7"]}
             textColors={["#333333"]}
             perpendicularText={false}
             spinDuration={0.8}
@@ -288,6 +266,7 @@ export const SpinWheel: React.FC = () => {
                 color: "#333333",
               },
             }}
+            fontWeight={900}
           />
         </div>
       </div>
