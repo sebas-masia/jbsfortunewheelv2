@@ -20,10 +20,21 @@ export const AdminDashboard: React.FC = () => {
     fetchSpins();
   }, []);
 
+  const handleDisbursed = async (id: string) => {
+    try {
+      await axios.patch(`${API_URL}/api/spins/${id}/disburse`);
+      // Refresh spins after disbursement
+      const response = await axios.get(`${API_URL}/api/spins`);
+      setSpins(response.data);
+    } catch (error) {
+      console.error("Error updating disbursement:", error);
+    }
+  };
+
   return (
     <div className="admin-dashboard">
       <h1>Admin Dashboard</h1>
-      <AdminTable spins={spins} />
+      <AdminTable spins={spins} onDisbursed={handleDisbursed} />
     </div>
   );
 };

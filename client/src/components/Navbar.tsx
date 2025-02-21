@@ -6,46 +6,28 @@ import Logo from "../../public/assets/Logo.png";
 export const Navbar: React.FC = () => {
   const sucursales = [
     {
-      name: "Atenas",
-      menu: "https://qrco.de/PeperonnisAtenas",
-      location: "https://maps.app.goo.gl/HtXGfZ8ZYwNych3F8",
-      express: "https://wa.me/50624469898",
+      name: "Escazu",
+      location: "https://maps.app.goo.gl/vs1ArLzSubmfoRpA6",
+      express:
+        "https://www.ubereats.com/cr-en/store/jbs-burgers-escazu/KoXbu46cROqOdd4_YwtkGw",
     },
     {
-      name: "Rio Segundo",
-      menu: "https://qrco.de/PeperonnisMCR2",
-      location: "https://maps.app.goo.gl/77EnAoyfEK2pxfhk7",
-      express: "https://wa.me/50624359999",
+      name: "Alajuela",
+      location: "https://maps.app.goo.gl/isEEHrBHQ4KfU8hL8",
+      express:
+        "https://www.ubereats.com/cr/store/jbs-burgers-alajuela/8qN1q0W2WCisrKYvzLPqDA",
     },
     {
-      name: "Ciruelas",
-      menu: "https://qrco.de/PeperonnisMCR2",
-      location: "https://maps.app.goo.gl/T9wh7GsJZ2TZCsMDA",
-      express: "https://wa.me/50621014748",
+      name: "San Ramon",
+      location: "https://maps.app.goo.gl/aaNVtLsFHeyELcn36",
+      express:
+        "https://www.ubereats.com/cr-en/store/jbs-san-ramon/_8_BSt-ZXgGYaCStxS0M_A",
     },
     {
-      name: "Turrucares",
-      menu: "https://qrco.de/Turrucares",
-      location: "https://maps.app.goo.gl/srsFAqMsDPXS87xB7",
-      express: "https://wa.me/50621026867",
-    },
-    {
-      name: "Santa Barbara",
-      menu: "https://qrco.de/PeperonnisSantaBarbara",
-      location: "https://maps.app.goo.gl/ca5AadYAz4idLodm8",
-      express: "https://wa.me/50622530000",
-    },
-    {
-      name: "Parrita",
-      menu: "https://qrco.de/PEPERONNISPARRITA",
-      location: "https://maps.app.goo.gl/JUYciYm3nsgpCUZu9",
-      express: "https://wa.me/50627799999",
-    },
-    {
-      name: "San Isidro",
-      menu: "https://qrco.de/PeperonnisSanIsidro",
-      location: "https://maps.app.goo.gl/1aPuC16pcXkuimNa6",
-      express: "https://wa.me/50622525252",
+      name: "Belen",
+      location: "https://maps.app.goo.gl/y83aovdDqe6yivdn9",
+      express:
+        "https://www.ubereats.com/cr-en/store/jbs-burgers-belen/kd75zV_sSH-M7_1rcxukXg",
     },
   ];
 
@@ -136,33 +118,6 @@ export const Navbar: React.FC = () => {
         </button>
 
         <div className={`navbar-links ${isOpen ? "open" : ""}`}>
-          <div className="nav-item">
-            <button
-              className={`nav-button ${
-                activeDropdown === "menu" ? "active" : ""
-              }`}
-              onClick={() => handleDropdownClick("menu")}
-            >
-              MENÚ
-            </button>
-            <div
-              className={`dropdown-content ${
-                activeDropdown === "menu" ? "active" : ""
-              }`}
-            >
-              {sucursales.map((sucursal) => (
-                <a
-                  key={sucursal.name}
-                  href={sucursal.menu}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {sucursal.name}
-                </a>
-              ))}
-            </div>
-          </div>
-
           <div className="nav-item">
             <button
               className={`nav-button ${

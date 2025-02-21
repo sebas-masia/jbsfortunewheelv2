@@ -4,46 +4,41 @@ import axios from "axios";
 import { API_URL } from "../config";
 
 const data = [
-  { option: "Pan de Ajo" },
-  { option: "Cheesesticks" },
-  { option: "Pizza Personal" },
-  { option: "Coca Cola 355Ml" },
-  { option: "10% descuento" },
+  { option: "Papitas GRATIS" },
+  { option: "Postre GRATIS" },
+  { option: "Papas Refresco GRATIS" },
+  { option: "4 Combos JBs Classic" },
   { option: "Intenta de nuevo" },
-  { option: "Pizza Mediana" },
 ];
 
-const LOCATIONS = [
-  "Atenas",
-  "Rio Segundo",
-  "Ciruelas",
-  "Turrucares",
-  "Santa Barbara",
-  "Parrita",
-  "San Isidro",
-];
+const LOCATIONS = ["Escazu", "Belen", "Alajuela", "San Ramon"];
 
 export const SpinWheel: React.FC = () => {
-  const [orderNumber, setOrderNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [sucursal, setSucursal] = useState("");
   const [cedula, setCedula] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const validateOrderNumber = (value: string) => {
-    return /^\d+$/.test(value);
-  };
-
   const validateCedula = (value: string) => {
-    return /^\d+$/.test(value);
+    return /^\d{9}$/.test(value); // Validates exactly 9 digits for Costa Rica IDs
   };
 
-  const checkExistingSpin = async (orderNumber: string) => {
+  const validateEmail = (value: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+
+  const validatePhoneNumber = (value: string) => {
+    return /^[2-8]\d{7}$/.test(value); // Validates Costa Rica phone numbers (8 digits starting with 2-8)
+  };
+
+  const checkExistingSpin = async (cedula: string) => {
     try {
-      const response = await axios.get(`${API_URL}/api/spins/${orderNumber}`);
+      const response = await axios.get(`${API_URL}/api/spins/cedula/${cedula}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -53,38 +48,76 @@ export const SpinWheel: React.FC = () => {
     }
   };
 
+  const checkSpecialPrizeAvailable = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/spins/special-prize`);
+      return !response.data.awarded; // returns true if special prize hasn't been awarded yet
+    } catch (error) {
+      console.error("Error checking special prize:", error);
+      return false; // assume prize is not available in case of error
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!orderNumber || !customerName || !sucursal || !cedula) {
+    if (!customerName || !sucursal || !cedula || !email || !phoneNumber) {
       setError("Por favor complete todos los campos");
       return;
     }
 
-    if (!validateOrderNumber(orderNumber)) {
-      setError("El número de orden debe contener solo números");
+    if (!validateCedula(cedula)) {
+      setError("La cédula debe contener exactamente 9 números");
       return;
     }
 
-    if (!validateCedula(cedula)) {
-      setError("La cédula debe contener solo números");
+    if (!validateEmail(email)) {
+      setError("Por favor ingrese un correo electrónico válido");
+      return;
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      setError("Por favor ingrese un número de teléfono válido (8 dígitos)");
       return;
     }
 
     try {
-      const existingSpin = await checkExistingSpin(orderNumber);
+      const existingSpin = await checkExistingSpin(cedula);
       if (existingSpin) {
-        setError("Este número de orden ya ha sido utilizado para un giro");
+        setError("Esta cédula ya ha sido utilizada para un giro");
         return;
       }
 
-      const newPrizeNumber = Math.floor(Math.random() * data.length);
+      // Check if special prize is still available
+      const isSpecialPrizeAvailable = await checkSpecialPrizeAvailable();
+
+      let newPrizeNumber;
+      if (isSpecialPrizeAvailable) {
+        // 1% chance to win the special prize if it's still available
+        const random = Math.random();
+        if (random < 0.01) {
+          newPrizeNumber = 3; // index of "4 Combos JBs Classic"
+        } else {
+          // Generate number excluding the special prize index
+          const availablePrizes = [0, 1, 2, 4];
+          const randomIndex = Math.floor(
+            Math.random() * availablePrizes.length
+          );
+          newPrizeNumber = availablePrizes[randomIndex];
+        }
+      } else {
+        // Special prize not available, exclude it from possible outcomes
+        const availablePrizes = [0, 1, 2, 4];
+        const randomIndex = Math.floor(Math.random() * availablePrizes.length);
+        newPrizeNumber = availablePrizes[randomIndex];
+      }
+
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
     } catch (error) {
       console.error("Error checking spin:", error);
-      setError("Ocurrió un error al verificar el número de orden");
+      setError("Ocurrió un error al verificar la cédula");
     }
   };
 
@@ -93,47 +126,57 @@ export const SpinWheel: React.FC = () => {
     setShowResult(true);
 
     try {
-      console.log("Attempting to post to:", `${API_URL}/api/spins`);
       const response = await axios.post(`${API_URL}/api/spins`, {
-        orderNumber: orderNumber,
-        customerName: customerName,
+        customerName,
         cedula,
+        email,
+        phoneNumber,
         sucursal,
         award: data[prizeNumber].option,
+        isSpecialPrize: prizeNumber === 3, // Add flag for special prize
       });
       console.log("Response:", response.data);
     } catch (error) {
       console.error("Error saving spin result:", error);
       if (axios.isAxiosError(error)) {
-        console.error("Error details:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          headers: error.response?.headers,
-        });
+        console.error("Error details:", error.response?.data);
       }
     }
   };
 
   const handlePlayAgain = () => {
-    setOrderNumber("");
     setCustomerName("");
     setSucursal("");
     setCedula("");
+    setEmail("");
+    setPhoneNumber("");
     setShowResult(false);
     setMustSpin(false);
     setError(null);
   };
 
   if (showResult) {
+    const isLose = data[prizeNumber].option === "Intenta de nuevo";
     return (
       <div className="main-container">
         <div className="result-container">
-          <h2>¡Felicitaciones {customerName}!</h2>
-          <p>Has ganado: {data[prizeNumber].option}</p>
-          <p style={{ fontSize: "12px" }}>
-            Recuerda mostrar tu factura para reclamar tu premio
-          </p>
+          {isLose ? (
+            <>
+              <h2>¡Lo sentimos {customerName}!</h2>
+              <p>Esta vez no ganaste un premio</p>
+              <p style={{ fontSize: "12px" }}>
+                Gracias por participar. ¡Mejor suerte la próxima!
+              </p>
+            </>
+          ) : (
+            <>
+              <h2>¡Felicitaciones {customerName}!</h2>
+              <p>Has ganado: {data[prizeNumber].option}</p>
+              <p style={{ fontSize: "12px" }}>
+                Recuerda mostrar tu factura para reclamar tu premio
+              </p>
+            </>
+          )}
           <button onClick={handlePlayAgain}>JUGAR DE NUEVO</button>
         </div>
       </div>
@@ -147,17 +190,6 @@ export const SpinWheel: React.FC = () => {
           <h1>LLENA, GIRA, ¡GANA!</h1>
           {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit} className="spin-form">
-            <div className="form-group">
-              <label htmlFor="orderNumber">NÚMERO DE ORDEN</label>
-              <input
-                id="orderNumber"
-                type="text"
-                value={orderNumber}
-                onChange={(e) => setOrderNumber(e.target.value)}
-                required
-              />
-            </div>
-
             <div className="form-group">
               <label htmlFor="name">NOMBRE</label>
               <input
@@ -174,9 +206,38 @@ export const SpinWheel: React.FC = () => {
               <input
                 id="cedula"
                 type="text"
+                maxLength={9}
                 value={cedula}
-                onChange={(e) => setCedula(e.target.value)}
+                onChange={(e) => setCedula(e.target.value.replace(/\D/g, ""))}
                 required
+                placeholder="123456789"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">CORREO ELECTRÓNICO</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="ejemplo@correo.com"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="phoneNumber">NÚMERO DE CELULAR</label>
+              <input
+                id="phoneNumber"
+                type="tel"
+                maxLength={8}
+                value={phoneNumber}
+                onChange={(e) =>
+                  setPhoneNumber(e.target.value.replace(/\D/g, ""))
+                }
+                required
+                placeholder="88888888"
               />
             </div>
 
@@ -213,8 +274,8 @@ export const SpinWheel: React.FC = () => {
             innerRadius={20}
             radiusLineColor="#666666"
             radiusLineWidth={1}
-            fontSize={15}
-            textDistance={60}
+            fontSize={13}
+            textDistance={59}
             fontFamily="Montserrat"
             backgroundColors={["#FFFFFF", "#f8f8f8"]}
             textColors={["#333333"]}

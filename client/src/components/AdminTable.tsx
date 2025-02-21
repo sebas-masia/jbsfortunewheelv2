@@ -1,31 +1,44 @@
 import React, { useState, useMemo } from "react";
 import { Spin } from "../types/types";
+import "./AdminTable.css";
 
 interface AdminTableProps {
   spins: Spin[];
+  onDisbursed?: (id: string) => void;
 }
 
-const LOCATIONS = [
-  "Atenas",
-  "Rio Segundo",
-  "Ciruelas",
-  "Turrucares",
-  "Santa Barbara",
-  "Parrita",
-  "San Isidro",
-];
+const LOCATIONS = ["Escazu", "Belen", "Alajuela", "San Ramon"];
 
 const FIELD_LABELS: Record<string, string> = {
   id: "ID",
-  orderNumber: "Número de Orden",
   customerName: "Nombre del Cliente",
   cedula: "Cédula",
+  email: "Email",
+  phoneNumber: "Teléfono",
   sucursal: "Sucursal",
   award: "Premio",
   createdAt: "Fecha",
+  isSpecialPrize: "Es Premio Especial",
+  isDisbursed: "Entregado",
 };
 
-export const AdminTable: React.FC<AdminTableProps> = ({ spins }) => {
+const COLUMNS = [
+  { field: "id", label: "ID", className: "col-id" },
+  { field: "customerName", label: "Nombre del Cliente", className: "col-name" },
+  { field: "cedula", label: "Cédula", className: "col-cedula" },
+  { field: "email", label: "Email", className: "col-email" },
+  { field: "phoneNumber", label: "Teléfono", className: "col-phone" },
+  { field: "sucursal", label: "Sucursal", className: "col-branch" },
+  { field: "award", label: "Premio", className: "col-prize" },
+  { field: "createdAt", label: "Fecha", className: "col-date" },
+  { field: "isSpecialPrize", label: "Especial", className: "col-special" },
+  { field: "isDisbursed", label: "Estado", className: "col-status" },
+] as const;
+
+export const AdminTable: React.FC<AdminTableProps> = ({
+  spins,
+  onDisbursed,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<keyof Spin>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -36,7 +49,6 @@ export const AdminTable: React.FC<AdminTableProps> = ({ spins }) => {
       .filter((spin) => {
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch =
-          spin.orderNumber.toLowerCase().includes(searchLower) ||
           spin.customerName.toLowerCase().includes(searchLower) ||
           spin.cedula.toLowerCase().includes(searchLower) ||
           spin.sucursal.toLowerCase().includes(searchLower) ||
@@ -107,42 +119,59 @@ export const AdminTable: React.FC<AdminTableProps> = ({ spins }) => {
         </div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            {[
-              "id",
-              "orderNumber",
-              "customerName",
-              "cedula",
-              "sucursal",
-              "award",
-              "createdAt",
-            ].map((field) => (
-              <th
-                key={field}
-                onClick={() => handleSort(field as keyof Spin)}
-                className={sortField === field ? `sorted-${sortDirection}` : ""}
-              >
-                {FIELD_LABELS[field]}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedAndFilteredSpins.map((spin) => (
-            <tr key={spin.id}>
-              <td>{spin.id}</td>
-              <td>{spin.orderNumber}</td>
-              <td>{spin.customerName}</td>
-              <td>{spin.cedula}</td>
-              <td>{spin.sucursal}</td>
-              <td>{spin.award}</td>
-              <td>{new Date(spin.createdAt).toLocaleString()}</td>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              {COLUMNS.map(({ field, label, className }) => (
+                <th
+                  key={field}
+                  onClick={() => handleSort(field as keyof Spin)}
+                  className={`${className || ""} ${
+                    sortField === field ? `sorted-${sortDirection}` : ""
+                  }`}
+                >
+                  {label}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortedAndFilteredSpins.map((spin) => (
+              <tr key={spin.id}>
+                <td className="col-id">{spin.id}</td>
+                <td className="col-name">{spin.customerName}</td>
+                <td className="col-cedula">{spin.cedula}</td>
+                <td className="col-email">{spin.email}</td>
+                <td className="col-phone">{spin.phoneNumber}</td>
+                <td className="col-branch">{spin.sucursal}</td>
+                <td className="col-prize">{spin.award}</td>
+                <td className="col-date">
+                  {new Date(spin.createdAt).toLocaleString()}
+                </td>
+                <td className="col-special">
+                  {spin.isSpecialPrize ? "Si" : "No"}
+                </td>
+                <td className="col-status">
+                  {spin.isDisbursed ? (
+                    <span className="status-badge">Si</span>
+                  ) : (
+                    <div className="button-group">
+                      <button
+                        onClick={() => onDisbursed?.(spin.id)}
+                        className="status-button approve"
+                      >
+                        Entregar
+                      </button>
+                      <button className="status-button reject">Rechazar</button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

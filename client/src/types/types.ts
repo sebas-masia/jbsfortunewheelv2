@@ -1,10 +1,13 @@
 export interface Spin {
   id: string;
-  orderNumber: string;
   customerName: string;
   cedula: string;
+  email: string;
+  phoneNumber: string;
   sucursal: string;
   award: string;
+  isSpecialPrize: boolean;
+  isDisbursed: boolean;
   createdAt: string;
 }
 

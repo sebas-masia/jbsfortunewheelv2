@@ -1,0 +1,98 @@
+.admin-table {
+  width: 100%;
+  padding: 10spx;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.2;
+}
+
+/* Make the table cells a bit taller to accommodate wrapped text */
+td {
+  min-height: 40px;
+  vertical-align: top;
+}
+
+/* Keep column headers on one line */
+th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Column widths */
+.col-id { width: 10%; }
+.col-name { width: 10%; }
+.col-cedula { width: 10%; }
+.col-email { width: 10%; }
+.col-phone { width: 10%; }
+.col-branch { width: 10%; }
+.col-prize { width: 10%; }
+.col-date { width: 10%; }
+.col-special { width: 10%; }
+.col-status { width: 10%; }
+
+/* Hide less important columns on smaller screens */
+@media screen and (max-width: 1200px) {
+  .hide-md {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hide-sm {
+    display: none;
+  }
+}
+
+.status-button {
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  width: 100%;
+}
+
+.status-button.approve {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status-button.approve:hover {
+  background-color: #45a049;
+}
+
+.status-button.reject {
+  background-color: #f44336;
+  color: white;
+}
+
+.status-button.reject:hover {
+  background-color: #da190b;
+}
+
+.status-badge {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+} 
