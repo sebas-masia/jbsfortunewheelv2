@@ -121,7 +121,7 @@ app.post('/api/spins', (req: Request, res: Response) => {
             subject: '¡Felicitaciones por tu premio en JBs! 🎉',
             attachments: [{
               filename: 'Logo.png',
-              path: './src/Logo.png', // Adjust this path to where your logo is stored
+              path: './public/Logo.png', // Adjust this path to where your logo is stored
               cid: 'logo' // Content ID for referencing in the HTML
             }],
             html: `
@@ -141,7 +141,7 @@ app.post('/api/spins', (req: Request, res: Response) => {
                   <ul style="list-style: none; padding: 0; margin: 20px 0;">
                     <li style="margin: 10px 0;">✅ Visita cualquier sucursal de JBs</li>
                     <li style="margin: 10px 0;">✅ Presenta este correo</li>
-                    <li style="margin: 10px 0;">✅ Muestra tu factura</li>
+                    <li style="margin: 10px 0;">✅ Muestra tu cedula</li>
                   </ul>
                 </div>
 
