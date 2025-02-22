@@ -8,7 +8,6 @@ const data = [
   { option: "Postre GRATIS" },
   { option: "Intenta de nuevo" },
   { option: "Papas Refresco GRATIS" },
-  { option: "4 Combos JBs Classic" },
   { option: "Intenta de nuevo" },
 ];
 
