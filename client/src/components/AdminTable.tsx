@@ -10,9 +10,7 @@ interface AdminTableProps {
 const FIELD_LABELS: Record<string, string> = {
   id: "ID",
   customerName: "Nombre del Cliente",
-  cedula: "Cédula",
   email: "Email",
-  phoneNumber: "Teléfono",
   award: "Premio",
   createdAt: "Fecha",
   isSpecialPrize: "Es Premio Especial",
@@ -22,9 +20,7 @@ const FIELD_LABELS: Record<string, string> = {
 const COLUMNS = [
   { field: "id", label: "ID", className: "col-id" },
   { field: "customerName", label: "Nombre del Cliente", className: "col-name" },
-  { field: "cedula", label: "Cédula", className: "col-cedula" },
   { field: "email", label: "Email", className: "col-email" },
-  { field: "phoneNumber", label: "Teléfono", className: "col-phone" },
   { field: "award", label: "Premio", className: "col-prize" },
   { field: "createdAt", label: "Fecha", className: "col-date" },
   { field: "isSpecialPrize", label: "Especial", className: "col-special" },
@@ -45,7 +41,6 @@ export const AdminTable: React.FC<AdminTableProps> = ({
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch =
           spin.customerName.toLowerCase().includes(searchLower) ||
-          spin.cedula.toLowerCase().includes(searchLower) ||
           spin.award.toLowerCase().includes(searchLower);
 
         return matchesSearch;
@@ -80,7 +75,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({
               <input
                 id="search"
                 type="text"
-                placeholder="Buscar por orden, nombre, cédula, sucursal o premio..."
+                placeholder="Buscar por orden, nombre, premio..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -111,9 +106,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({
               <tr key={spin.id}>
                 <td className="col-id">{spin.id}</td>
                 <td className="col-name">{spin.customerName}</td>
-                <td className="col-cedula">{spin.cedula}</td>
                 <td className="col-email">{spin.email}</td>
-                <td className="col-phone">{spin.phoneNumber}</td>
                 <td className="col-prize">{spin.award}</td>
                 <td className="col-date">
                   {new Date(spin.createdAt).toLocaleString("es-CR", {

@@ -1,9 +1,7 @@
 export interface Spin {
   id: string;
   customerName: string;
-  cedula: string;
   email: string;
-  phoneNumber: string;
   award: string;
   isSpecialPrize: boolean;
   isDisbursed: boolean;

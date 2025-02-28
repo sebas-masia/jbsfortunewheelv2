@@ -4,6 +4,7 @@ import { Database } from 'sqlite3';
 import { v4 as uuidv4 } from 'uuid';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import path from 'path';
 dotenv.config();
 
 console.log('Email config:', {
@@ -46,17 +47,25 @@ app.use(cors({
   },
   credentials: true
 }));
-
 app.use(express.json());
 
-const db = new Database('spins3.db');
+// Update database initialization
+const dbPath = process.env.RENDER_DISK_PATH 
+  ? path.join(process.env.RENDER_DISK_PATH, 'spins4.db')
+  : 'spins4.db';
+
+const db = new Database(dbPath, (err) => {
+  if (err) {
+    console.error('Database connection error:', err);
+  } else {
+    console.log('Connected to spins4 database at:', dbPath);
+  }
+});
 
 interface Spin {
   id: string;
   customerName: string;
-  cedula: string;
   email: string;
-  phoneNumber: string;
   award: string;
   isSpecialPrize?: boolean;
   isDisbursed: boolean;
@@ -68,9 +77,7 @@ db.run(`
   CREATE TABLE IF NOT EXISTS spins (
     id TEXT PRIMARY KEY,
     customerName TEXT NOT NULL,
-    cedula TEXT NOT NULL,
     email TEXT NOT NULL,
-    phoneNumber TEXT NOT NULL,
     award TEXT NOT NULL,
     isSpecialPrize BOOLEAN DEFAULT 0,
     isDisbursed BOOLEAN DEFAULT 0,
@@ -100,12 +107,12 @@ transporter.verify(function (error, success) {
 
 // Modify the POST /api/spins endpoint
 app.post('/api/spins', (req: Request, res: Response) => {
-  const { customerName, cedula, email, phoneNumber, award, isSpecialPrize } = req.body as Spin;
+  const { customerName, email, award, isSpecialPrize } = req.body as Spin;
   const id = uuidv4();
 
   db.run(
-    'INSERT INTO spins (id, customerName, cedula, email, phoneNumber, award, isSpecialPrize, isDisbursed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [id, customerName, cedula, email, phoneNumber, award, isSpecialPrize ? 1 : 0, 0],
+    'INSERT INTO spins (id, customerName, email, award, isSpecialPrize, isDisbursed) VALUES (?, ?, ?, ?, ?, ?)',
+    [id, customerName, email, award, isSpecialPrize ? 1 : 0, 0],
     async (err) => {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -166,9 +173,7 @@ app.post('/api/spins', (req: Request, res: Response) => {
       res.status(201).json({ 
         id, 
         customerName, 
-        cedula, 
         email, 
-        phoneNumber, 
         award,
         isSpecialPrize,
         isDisbursed: false 
